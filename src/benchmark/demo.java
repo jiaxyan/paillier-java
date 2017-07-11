@@ -8,7 +8,7 @@ public class demo {
 		
 		
 		System.out.println("Generating keypair...");
-		public_private_keys = new keypair();
+		public_private_keys = new keypair(30);
 //		keypair
 	}
 

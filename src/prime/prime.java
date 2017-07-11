@@ -17,15 +17,32 @@ public class prime {
 	}
 	
 	
-	private static void ipow(int test, int possible, int possible_1) {
-		long Test = test = test % possible_1;
-	}
+//	private static void ipow(int test, int possible, int possible_1) {
+//		long Test = test = test % possible_1;
+//	}
 	
 	/*
 	 * 返回true——possible肯定不是prime
 	 * 返回false——可能是prime
 	 */
-	private static boolean rabin_miller_witness(int test, int possible) {
+	private static boolean rabin_miller_witness(int test, int possi) {
+		int possi_1 = possi -1;
+		long Test = test = test % possi;
+		if(Test==1)
+			return false;
+		long tempT = 1L;
+		while(tempT <= possi_1)
+			tempT <<= 1;
+		tempT >>=2;
+		
+		while(tempT>0) {
+			Test = (Test*Test) % possi;
+			if( (tempT&possi_1) > 0 )
+				Test = (Test*test)%possi;
+			if(Test == 1)
+				return false;
+			tempT >>= 1;
+		}
 		
 		return true;
 	}
@@ -73,6 +90,9 @@ public class prime {
 		int possible = 0;
 		int min_bound = (int) Math.pow(2, (bits-1))+1;
 		int max_bound = (int) Math.pow(2, bits);
+		
+//		System.out.println("bound:"+(max_bound-min_bound));
+		
 		while(true){
 			Random random = new Random();
 			possible = random.nextInt(max_bound-min_bound)+min_bound;
