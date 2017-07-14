@@ -14,8 +14,8 @@ public class KeyPair {
 		p = prime.generate_prime(bits,0,0);
 		q = prime.generate_prime(bits,0,0);
 		
-		System.out.println("p= "+p);
-		System.out.println("q= "+q);
+		System.out.println(" **** p= \t"+p);
+		System.out.println(" **** q= \t"+q);
 		//´óËØÊı³Ë»ın
 		BigInteger n = p.multiply(q);
 		
