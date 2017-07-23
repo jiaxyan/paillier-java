@@ -10,7 +10,8 @@ import paillier.*;
 public class demo {
 
 	/**
-	 * @param args
+	 * short signature: signature length-160 bits
+	 * paillier encryption: plaintext length-1024 bits; 2018 bits;
 	 */
 	public static void main(String[] args) {
 		KeyPair keypair;
