@@ -22,7 +22,9 @@ import paillier.paillier;
 public class parallel {
 
 	/**
-	 * @param args
+	 * @param args[0] key_bits
+	 * 		  args[1] parallel_granularity 10
+	 * 		  args[2] 
 	 */
 	public static void main(String[] args) {
 		IntervalTime encry_sign = new IntervalTime();
@@ -30,7 +32,8 @@ public class parallel {
 		IntervalTime si_verify_decry = new IntervalTime();
 		int countbase = 2000;
 		int count = 0;//运行次数
-		int key_bits = 512;
+		int key_bits = Integer.parseInt(args[0]);
+		int parallel_granularity = Integer.parseInt(args[1]);
 		KeyPair keypair = new KeyPair(key_bits);
 		BigInteger plaintext = new BigInteger(key_bits*2,new Random());
 		BigInteger cipher = paillier.encrypt(keypair, plaintext);
@@ -48,9 +51,10 @@ public class parallel {
 		JSONObject jsonobj_si_verify_decry = new JSONObject();
 //		String path_encry_sign = "D:\\paillierExp\\result_encry_sign.json";
 //		String path_si_verify = "D:\\paillierExp\\result_si_verify.json";
+//		String path_si_verify_decry = "D:\\paillierExp\\result_si_verify_decry.json";
+		
 		String path_encry_sign = "/home/guadan2001/paillier/result/result_encry_sign.json";
 		String path_si_verify = "/home/guadan2001/paillier/result/result_si_verify.json";
-//		String path_si_verify_decry = "D:\\paillierExp\\result_si_verify_decry.json";
 		String path_si_verify_decry = "/home/guadan2001/paillier/result/result_si_verify_decry.json";
 		
 		
@@ -90,7 +94,7 @@ public class parallel {
 				 */
 				encry_sign.setStartTime();
 				ForkJoinPool forkjoinPool_encry_sign = new ForkJoinPool(core);
-				CalculateTask_encry_sign task_encry_sign = new CalculateTask_encry_sign(count, keypair, plaintext, bls01, AsykeyPair );
+				CalculateTask_encry_sign task_encry_sign = new CalculateTask_encry_sign(parallel_granularity, count, keypair, plaintext, bls01, AsykeyPair );
 				
 				Future<Integer> result_encry_sign = forkjoinPool_encry_sign.submit(task_encry_sign);
 				try {
@@ -100,15 +104,15 @@ public class parallel {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				jsonobj_encry_sign.put("encry_sign_avgTime"+count+"Times"+core+"core", encry_sign.getIntervalTime()/count);
-				System.out.println("encry_sign_avgTime("+count+"Times)"+core+"core:"+encry_sign.getIntervalTime()/count+"\n");
+				jsonobj_encry_sign.put("encry_sign_avgTime"+count+"Times"+core+"core", encry_sign.getIntervalTime());
+				System.out.println("encry_sign_avgTime("+count+"Times)"+core+"core:"+encry_sign.getIntervalTime()+"\n");
 				
 				/*
 				 * 签名验证的forkjoin
 				 */
 				si_verify.setStartTime();
 				ForkJoinPool forkjoinPool_si_verify = new ForkJoinPool(core);
-				CalculateTask_si_verify task_si_verify = new CalculateTask_si_verify(count, keypair, plaintext, bls01, AsykeyPair,
+				CalculateTask_si_verify task_si_verify = new CalculateTask_si_verify(parallel_granularity, count, keypair, plaintext, bls01, AsykeyPair,
 						cipher, signature);
 				Future<Integer> result_si_verify = forkjoinPool_si_verify.submit(task_si_verify);
 				try {
@@ -118,15 +122,15 @@ public class parallel {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				jsonobj_si_verify.put("si_verify_avgTime"+count+"Times"+core+"core", si_verify.getIntervalTime()/count);
-				System.out.println("si_verify_avgTime("+count+"Times)"+core+"core:"+si_verify.getIntervalTime()/count+"\n");
+				jsonobj_si_verify.put("si_verify_avgTime"+count+"Times"+core+"core", si_verify.getIntervalTime());
+				System.out.println("si_verify_avgTime("+count+"Times)"+core+"core:"+si_verify.getIntervalTime()+"\n");
 				
 				/*
 				 * 签名验证+解密forkjoin
 				 */
 				si_verify_decry.setStartTime();
 				ForkJoinPool forkjoinPool_si_verify_decry = new ForkJoinPool(core);
-				CalculateTask_si_verify_decry task_si_verify_decry = new CalculateTask_si_verify_decry(count, keypair, plaintext, bls01, AsykeyPair,
+				CalculateTask_si_verify_decry task_si_verify_decry = new CalculateTask_si_verify_decry(parallel_granularity, count, keypair, plaintext, bls01, AsykeyPair,
 						cipher, signature);
 				Future<Integer> result_si_verify_decry = forkjoinPool_si_verify_decry.submit(task_si_verify_decry);
 				try {
@@ -136,34 +140,38 @@ public class parallel {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				jsonobj_si_verify_decry.put("si_verify_decry_avgTime"+count+"Times"+core+"core", si_verify_decry.getIntervalTime()/count);
-				System.out.println("si_verify_decry_avgTime("+count+"Times)"+core+"core:"+si_verify_decry.getIntervalTime()/count+"\n\n\n");
+				jsonobj_si_verify_decry.put("si_verify_decry_avgTime"+count+"Times"+core+"core", si_verify_decry.getIntervalTime());
+				System.out.println("si_verify_decry_avgTime("+count+"Times)"+core+"core:"+si_verify_decry.getIntervalTime()+"\n\n\n");
 			}
 			
-			
-			/*
-			 * 将json写入文件
-			 */
-			try {
-				 Writer write = new OutputStreamWriter(new FileOutputStream(file_encry_sign), "UTF-8");
-		            write.write(jsonobj_encry_sign.toString());
-		            write.flush();
-		            write.close();
-		            
-		            write = new OutputStreamWriter(new FileOutputStream(file_si_verify), "UTF-8");
-		            write.write(jsonobj_si_verify.toString());
-		            write.flush();
-		            write.close();
-		            
-		            write = new OutputStreamWriter(new FileOutputStream(file_si_verify_decry), "UTF-8");
-		            write.write(jsonobj_si_verify_decry.toString());
-		            write.flush();
-		            write.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
+		
+		/*
+		 * 将json写入文件
+		 */
+		try {
+			System.out.println("jsonobj_encry_sign.toString():\n"+jsonobj_encry_sign.toString()+"\n");
+			Writer write1 = new OutputStreamWriter(new FileOutputStream(file_encry_sign), "UTF-8");
+            write1.write(jsonobj_encry_sign.toString());
+            write1.flush();
+            write1.close();
+	           
+            System.out.println("jsonobj_si_verify.toString():\n"+jsonobj_si_verify.toString()+"\n");
+            Writer write2 = new OutputStreamWriter(new FileOutputStream(file_si_verify), "UTF-8");
+            write2.write(jsonobj_si_verify.toString());
+            write2.flush();
+            write2.close();
+            
+            System.out.println("jsonobj_si_verify_decry.toString():\n"+jsonobj_si_verify_decry.toString()+"\n");
+          	Writer write3 = new OutputStreamWriter(new FileOutputStream(file_si_verify_decry), "UTF-8");
+            write3.write(jsonobj_si_verify_decry.toString());
+            write3.flush();
+            write3.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
 
