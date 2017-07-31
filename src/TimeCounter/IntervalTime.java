@@ -13,6 +13,9 @@ public class IntervalTime {
 		this.endTime = System.nanoTime();
 	}
 	
+	/*
+	 * get task run time
+	 */
 	public long getIntervalTime() {
 		return (endTime - startTime) / 1000;
 	}

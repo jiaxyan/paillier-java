@@ -1,5 +1,9 @@
 package benchmark;
-
+/**
+ * 
+ * @author charlie
+ *	used to accumulate task time
+ */
 public class Double {
 	public long encry;
 	public long decry;

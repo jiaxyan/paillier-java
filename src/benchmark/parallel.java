@@ -24,14 +24,13 @@ public class parallel {
 	/**
 	 * @param args[0] key_bits
 	 * 		  args[1] parallel_granularity 10
-	 * 		  args[2] 
 	 */
 	public static void main(String[] args) {
 		IntervalTime encry_sign = new IntervalTime();
 		IntervalTime si_verify = new IntervalTime();
 		IntervalTime si_verify_decry = new IntervalTime();
 		int countbase = 2000;
-		int count = 0;//运行次数
+		int count = 0;//run counts, for example 1*2000 2*2000(4000) ...
 		int key_bits = Integer.parseInt(args[0]);
 		int parallel_granularity = Integer.parseInt(args[1]);
 		KeyPair keypair = new KeyPair(key_bits);
@@ -44,7 +43,7 @@ public class parallel {
 		
 		
 		/*
-		 * 绘图json
+		 * get run time and save to json file
 		 */
 		JSONObject jsonobj_encry_sign = new JSONObject();
 		JSONObject jsonobj_si_verify = new JSONObject();
@@ -90,6 +89,7 @@ public class parallel {
 			for(int i = 1; i < 6; i++ ) {
 				count = countbase * i;
 				/*
+				 * encry & sign's forkjoin
 				 * 加密+签名的forkjoin
 				 */
 				encry_sign.setStartTime();
@@ -101,13 +101,13 @@ public class parallel {
 					System.out.println("\nencry_sign(0 is ok)\t"+result_encry_sign.get());
 					encry_sign.setEndTime();
 				} catch (InterruptedException | ExecutionException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				jsonobj_encry_sign.put("encry_sign_avgTime"+count+"Times"+core+"core", encry_sign.getIntervalTime());
 				System.out.println("encry_sign_avgTime("+count+"Times)"+core+"core:"+encry_sign.getIntervalTime()+"\n");
 				
 				/*
+				 * sign & verification's forkjoin
 				 * 签名验证的forkjoin
 				 */
 				si_verify.setStartTime();
@@ -119,13 +119,13 @@ public class parallel {
 					System.out.println("\nsi_verify(0 is ok)\t"+result_si_verify.get());
 					si_verify.setEndTime();
 				} catch (InterruptedException | ExecutionException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				jsonobj_si_verify.put("si_verify_avgTime"+count+"Times"+core+"core", si_verify.getIntervalTime());
 				System.out.println("si_verify_avgTime("+count+"Times)"+core+"core:"+si_verify.getIntervalTime()+"\n");
 				
 				/*
+				 * sign & verification & decry's forkjoin
 				 * 签名验证+解密forkjoin
 				 */
 				si_verify_decry.setStartTime();
@@ -147,6 +147,7 @@ public class parallel {
 		}
 		
 		/*
+		 * save generated json file to local file
 		 * 将json写入文件
 		 */
 		try {
@@ -168,7 +169,6 @@ public class parallel {
             write3.flush();
             write3.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

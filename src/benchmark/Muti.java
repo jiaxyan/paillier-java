@@ -1,5 +1,9 @@
 package benchmark;
-
+/**
+ * 
+ * @author charlie
+ *	used to accumulate task time
+ */
 public class Muti {
 	public long encry_sign;
 	public long si_verify;

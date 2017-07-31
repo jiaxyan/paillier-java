@@ -7,12 +7,14 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 
 import SS.BLS01;
 import paillier.KeyPair;
-
+/**
+ * 
+ * @author charlie
+ *	used in forkjoin of Task_si_verify 
+ */
 public class CalculateTask_si_verify extends RecursiveTask<Integer>{
 
-//	private File file;
 	private int Times;//总任务数量（次数）
-//	public static final int threshold = 10;//每次至多跑的任务数量（次数）
 	private KeyPair keypair;
 	private BigInteger plaintext;
 	private AsymmetricCipherKeyPair AsykeyPair;
@@ -50,8 +52,6 @@ public class CalculateTask_si_verify extends RecursiveTask<Integer>{
 			taskRight.fork();
 			int left = taskLeft.join();
 			int right = taskRight.join();
-//			time_total.add(sumLeft);
-//			time_total.add(sumRight);
 		}
 		return 0;
 	}

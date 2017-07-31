@@ -7,12 +7,14 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 
 import SS.BLS01;
 import paillier.KeyPair;
-
+/**
+ * 
+ * @author charlie
+ *	used in forkjoin of Task_encry_sign 
+ */
 public class CalculateTask_encry_sign extends RecursiveTask<Integer>{
 
-//	private File file;
 	private int Times;//总任务数量（次数）
-//	public static final int threshold = 10;//每次至多跑的任务数量（次数）
 	private KeyPair keypair;
 	private BigInteger plaintext;
 	private AsymmetricCipherKeyPair AsykeyPair;
